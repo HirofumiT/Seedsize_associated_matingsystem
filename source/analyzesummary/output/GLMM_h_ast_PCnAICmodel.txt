@@ -1,0 +1,47 @@
+Y ~ PC2 + XS + (1|Z)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: forml
+   Data: dataset
+
+     AIC      BIC   logLik deviance df.resid 
+   267.7    281.3   -128.9    257.7      107 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.05027 -0.62334  0.00672  0.44864  2.73896 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Z        (Intercept) 1.4585   1.2077  
+ Residual             0.3979   0.6308  
+Number of obs: 112, groups:  Z, 13
+
+Fixed effects:
+             Estimate Std. Error        df t value Pr(>|t|)  
+(Intercept)  -0.18906    0.34774  13.87080  -0.544   0.5953  
+PC2           0.11198    0.06263 100.67896   1.788   0.0768 .
+XS           -0.32335    0.12423  99.55016  -2.603   0.0107 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+    (Intr) PC2   
+PC2 -0.043       
+XS  -0.180  0.061
+$Z
+               (Intercept)
+Achillea        -1.1351707
+Aster           -0.8926713
+Bidens           1.3275053
+Carthamus        3.0940218
+Crepis          -0.8130611
+Flaveria        -1.3714713
+Hypochaeris      0.2485658
+Layia           -0.1762299
+Madia            0.7027689
+Microseris       0.7669872
+Senecio         -0.5408568
+Sonchus         -0.7377124
+Symphyotrichum  -0.4726756
+
+with conditional variances for “Z” 

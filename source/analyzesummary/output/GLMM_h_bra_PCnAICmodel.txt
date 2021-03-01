@@ -1,0 +1,40 @@
+Y ~ PC2 + XS + (1|Z)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: forml
+   Data: dataset
+
+     AIC      BIC   logLik deviance df.resid 
+   176.4    186.5    -83.2    166.4       51 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.9135 -0.6351 -0.0644  0.5942  3.7221 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Z        (Intercept) 0.3029   0.5504  
+ Residual             0.9953   0.9976  
+Number of obs: 56, groups:  Z, 6
+
+Fixed effects:
+            Estimate Std. Error       df t value Pr(>|t|)   
+(Intercept)  0.04361    0.29948  9.53106   0.146  0.88726   
+PC2          0.32678    0.14692 54.86160   2.224  0.03027 * 
+XS          -0.91154    0.29041 54.30176  -3.139  0.00274 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+    (Intr) PC2   
+PC2  0.115       
+XS  -0.457 -0.209
+$Z
+           (Intercept)
+Brassica    0.73398996
+Cardamine  -0.02850422
+Cochlearia -0.16645810
+Diplotaxis -0.80171988
+Erysimum   -0.02468595
+Lepidium    0.28737819
+
+with conditional variances for “Z” 
