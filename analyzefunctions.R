@@ -5,28 +5,44 @@ initializing = function(){
   library("lme4")
   library("stringr")
   library('conflicted')
-  library("lmerTest") #lmerTest????????????
+  library("lmerTest") 
   library("MuMIn")
+  #library("maptools")
   
   glmm_chart <<- data.frame(array(rep(0,7),dim = c(0,7)))
   aicscore_chart <<- data.frame(array(rep(0,3),dim = c(0,4)))
   glmm.pcn_chart <<- data.frame(array(rep(0,7),dim = c(0,7)))
   a_bra_tmp <<- read.csv('all/bra_analyzingset.csv')
-  a_com_tmp <<- read.csv('all/com_analyzingset.csv')
+  a_ast_tmp <<- read.csv('all/ast_analyzingset.csv')
   a_sol_tmp <<- read.csv('all/sol_analyzingset.csv')
-  a_all_tmp <<- rbind(rbind(a_bra_tmp,a_com_tmp),a_sol_tmp)
+  a_all_tmp <<- rbind(rbind(a_bra_tmp,a_ast_tmp),a_sol_tmp)
   
   h_bra_tmp <<- read.csv('herbonly/bra_analyzingset.csv')
-  h_com_tmp <<- read.csv('herbonly/com_analyzingset.csv')
+  h_ast_tmp <<- read.csv('herbonly/ast_analyzingset.csv')
   h_sol_tmp <<- read.csv('herbonly/sol_analyzingset.csv')
   
   
   a_sol_foml <<- Y ~ XS  + log(srad)  + TP + wind  + (1|Z)
-  a_com_foml <<- Y ~ XS  + rf + tmin + varpr  + (1|Z)
+  a_ast_foml <<- Y ~ XS  + rf + tmin + varpr  + (1|Z)
   a_bra_foml <<- Y ~ XS  + rf + varpr + (1|Z)
   h_sol_foml <<- Y ~ XS  + log(XC) + tmin + wind  + (1|Z)
-  h_com_foml <<- Y ~ XS  + rf + tmin + varpr  + (1|Z)
+  h_ast_foml <<- Y ~ XS  + rf + tmin + varpr  + (1|Z)
   h_bra_foml <<- Y ~ XS  +log(srad) +  (1|Z)
+  datanames <<- c('sol','bra','ast')
+  setwd('/Users/hiro.t/Documents/GitHub/Seedsize_associated_matingsystem/source')
+  
+  
+}
+
+savesummarys = function(){
+  names(glmm_chart) <<- c('famname','estimate-effect','Std.Error','df','tvalue','Pr','forml')
+  write.csv(glmm_chart,file = 'analyzesummary/output/glmm-summary.csv',row.names = F)
+  
+  names(aicscore_chart) <<- c('famname','AICbestmodel','AICscore')
+  write.csv(aicscore_chart,file = 'analyzesummary/output/AIC-PCn.csv',row.names = F)
+  
+  names(glmm.pcn_chart) <<- c('famname','estimate-effect','Std. Error','df','t value','Pr','forml')
+  write.csv(glmm.pcn_chart,file = 'analyzesummary/output/PCnAICglmm-summary.csv',row.names = F)
   
 }
 
@@ -147,14 +163,14 @@ OutputSummary_AICed = function(analy,fam){
   
   
   #write(paste("data:",length(tmp$Y),"\n"),file = str_c('output/',fam,'_a_AICed.txt',sep =""),append = T)
-  write(capture.output(summary(analy)),file = str_c('output/',fam,'_a_AICed.txt',sep =""),append = T)
-  write(capture.output(ranef(analy)),file = str_c('output/',fam,'_a_AICed.txt',sep =""),append = T)
+  write(capture.output(summary(analy)),file = str_c('analyzesummary/output/',fam,'_a_AICed.txt',sep =""),append = T)
+  write(capture.output(ranef(analy)),file = str_c('analyzesummary/output/',fam,'_a_AICed.txt',sep =""),append = T)
 }
 
 fPCA =function(templ,fam){
   templ$srad = log(templ$srad)
   templ.pca = prcomp(templ[5:10],scale = TRUE)
-  save(templ.pca, file = paste('rdata/',fam,'.rda',sep = ''))
+  save(templ.pca, file = paste('analyzesummary/rdata/',fam,'.rda',sep = ''))
   tmp_2 = transform(templ,PC1  = templ.pca$x[,1],PC2  = templ.pca$x[,2],PC3 = templ.pca$x[,3],PC4 = templ.pca$x[,4],PC5 = templ.pca$x[,5],PC6 = templ.pca$x[,6])
   #Panaly = lmerTest::lmer(Y ~ XS + PC1 + PC2 + (1|Z),data=tmp_2 ,REML = FALSE)
   #print(summary(templ.pca))
@@ -162,14 +178,14 @@ fPCA =function(templ,fam){
   # write.csv(tmp_2,paste('fromAnalyzer/',fam,'_analyzingset_pca`.csv',sep=''),row.names = F)
   #write(capture.output(summary(Panaly)),file = str_c('output/',fam,'_a_PCA.txt',sep =""),append = T)
   #write(capture.output(ranef(Panaly)),file = str_c('output/',fam,'_a_PCA.txt',sep =""),append = T)
-  write.csv(templ.pca$x,file = str_c('output/pcasummary_',fam,'.csv',sep = ''),row.names = F)
+  write.csv(templ.pca$x,file = str_c('analyzesummary/output/pcasummary_',fam,'.csv',sep = ''),row.names = F)
   
   return(tmp_2)
 }
 
 
 savetxtglmm = function(dataset,forml,famname,analy){
-  txtsavedir = str_c('output/GLMM_',famname,'.txt',sep ="")
+  txtsavedir = str_c('analyzesummary/output/GLMM_',famname,'.txt',sep ="")
   print(forml)
   write(paste(forml,sep = ''),file = txtsavedir)
   write(capture.output(summary(analy)),file = txtsavedir, append = T)
@@ -178,7 +194,7 @@ savetxtglmm = function(dataset,forml,famname,analy){
 doandsaveglmm = function(dataset,forml,famname){
   analy = lmerTest::lmer(forml,dataset, REML = FALSE)
   savetxtglmm(dataset,forml,famname,analy)
-  save(analy,file = sprintf('rdata/GLMM_%s.rda',famname))
+  save(analy,file = sprintf('analyzesummary/rdata/GLMM_%s.rda',famname))
   return(analy)
 }
 
